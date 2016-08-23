@@ -5,7 +5,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 
 // let yeomanImage = require('../images/yeoman.png');
-
+// test
 let imagesData = require('../data/imagesData.json');
 imagesData = (function (imagesDataArr) {
     for (var i = 0; i < imagesDataArr.length; i++) {
