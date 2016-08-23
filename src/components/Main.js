@@ -4,7 +4,7 @@ require('styles/App.scss');
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-let yeomanImage = require('../images/yeoman.png');
+// let yeomanImage = require('../images/yeoman.png');
 
 let imagesData = require('../data/imagesData.json');
 imagesData = (function (imagesDataArr) {
