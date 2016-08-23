@@ -1,0 +1,59 @@
+/* Base Application Styles */
+html, body {
+    background-color: #222;
+    width: 100%;
+    height: 100%;
+}
+#app {
+    width: 100%;
+    height: 100%;
+}
+.stage {
+    position: relative;
+    width: 100%;
+    height: 680px;
+}
+.img-sec {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background-color: #ddd;
+
+    @at-root { // 提到css最外层
+        .img-figure {
+            position: absolute;
+            width: 320px;
+            height: 280px;
+            margin: 0;
+            padding: 40px;
+            box-sizing: border-box;
+            background-color: #fff;
+
+            img {
+                max-width: 240px;
+                max-height: 160px;
+                width: 100%;
+            }
+        }
+
+        figcaption {
+            text-align: center;
+
+            .img-title {
+                margin: 20px 0 0 0;
+                color: #a7a0a2;
+                font-size: 16px;
+            }
+        }
+    }
+
+}
+.controller {
+    position: absolute;
+    left: 0;
+    bottom: 30px;
+    z-index: 101;
+    width: 100%;
+    text-align: center;
+}

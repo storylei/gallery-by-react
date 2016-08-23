@@ -1,9 +1,10 @@
 import React from 'react';
+import ReactDOM from 'react-dom';
 
-let clickComp = React.createClass({
+let ClickComp = React.createClass({
     handleClick: function (event) {
         console.log(this);
-        let tipE = React.findDOMNode(this.refs.tip);
+        let tipE = ReactDOM.findDOMNode(this.refs.tip);
         if (tipE.style.display === 'none') {
             tipE.style.display = 'inline';
         }else {
@@ -22,7 +23,7 @@ let clickComp = React.createClass({
     }
 });
 
-let inputComp = React.createClass({
+let InputComp = React.createClass({
     getInitialState: function () {
         return {
             inputContent: ''
@@ -38,20 +39,20 @@ let inputComp = React.createClass({
     render: function () {
         return (
             <div>
-                <input type="text" onChange={this.handleChange} /><span>{this.state.inputContent}</span>
+                <input type="text" onChange={this.handleChange} ref="tip" /><span>{this.state.inputContent}</span>
             </div>
         );
     }
 });
 
-var MyComponent1 = React.createFactory(clickComp);
-var MyComponent = React.createFactory(inputComp);
+// var MyComponent1 = React.createFactory(clickComp);
+// var MyComponent = React.createFactory(inputComp);
 let TestComponent = React.createClass({
     render: function () {
         return (
             <div>
-                <MyComponent />
-                <MyComponent1 />
+                <ClickComp />
+                <InputComp />
             </div>
         );
     }
