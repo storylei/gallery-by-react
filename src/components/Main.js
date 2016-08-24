@@ -21,7 +21,21 @@ function getRangeRandom(low, high) {
     return Math.ceil(Math.random() * (high - low) + low);
 }
 
+function get30DegRandom() {
+    return (Math.random() > 0.5 ? '' : '-') + Math.ceil(Math.random() * 30);
+}
+
 var ImgFigure = React.createClass({
+    handleClick(e) {
+        if (this.props.arrange.isCenter) {
+            this.props.inverse();
+        }else {
+            this.props.center();
+        }
+        e.stopPropagation();
+        e.preventDefault();
+    },
+
     render () {
         var styleObj = {};
 
@@ -32,9 +46,9 @@ var ImgFigure = React.createClass({
 
         // 如果图片的旋转角度有值并且不为0， 添加旋转角度
         if (this.props.arrange.rotate) {
-          (['MozTransform', 'msTransform', 'WebkitTransform', 'transform']).forEach(function (value) {
+            (['MozTransform', 'msTransform', 'WebkitTransform', 'transform']).forEach(function (value) {
             styleObj[value] = 'rotate(' + this.props.arrange.rotate + 'deg)';
-          }.bind(this));
+            }.bind(this));
         }
 
         // 如果是居中的图片， z-index设为11
@@ -46,12 +60,17 @@ var ImgFigure = React.createClass({
             imgFigureClassName += this.props.arrange.isInverse ? ' is-inverse' : '';
 
         return (
-            <figure className='img-figure' style={styleObj} onClick={this.handleClick}>
+            <figure className={imgFigureClassName} style={styleObj} onClick={this.handleClick}>
                 <img src={this.props.data.url}
                      alt={this.props.data.title}
                 />
                 <figcaption>
                     <h2 className="img-title">{this.props.data.title}</h2>
+                    <div className="img-back" onClick={this.handleClick}>
+                        <p>
+                            {this.props.data.desc}
+                        </p>
+                    </div>
                 </figcaption>
             </figure>
         );
@@ -76,13 +95,26 @@ var AppComponent =  React.createClass({
             }
         },
 
+        inverse (index) {
+            return function () {
+                var imgsArrangeArr = this.state.imgsArrangeArr;
+                imgsArrangeArr[index].isInverse = !imgsArrangeArr[index].isInverse;
+                this.setState({
+                    imgsArrangeArr: imgsArrangeArr
+                });
+            }.bind(this);
+        },
+
         getInitialState() {
             return {
                 imgsArrangeArr: [{
                     pos: {
                         left: '0',
                         top: '0'
-                    }
+                    },
+                    rotate: 0,
+                    isInverse: false,
+                    isCenter: false
                 }]
             };
         },
@@ -122,7 +154,11 @@ var AppComponent =  React.createClass({
             this.rearrange(0);
         },
 
-
+        center (index) {
+            return function () {
+                this.rearrange(index);
+            }.bind(this);
+        },
 
         rearrange(centerIndex) {
             var imgsArrangeArr = this.state.imgsArrangeArr,
@@ -148,6 +184,8 @@ var AppComponent =  React.createClass({
 
             // center
             imgsArrangeCenterArr[0].pos = centerPos;
+            imgsArrangeCenterArr[0].rotate = 0;
+            imgsArrangeCenterArr[0].isCenter = true;
 
             // top
             topImgSpliceIndex = Math.ceil(imgsArrangeArr.length - topImgNum);
@@ -158,6 +196,8 @@ var AppComponent =  React.createClass({
                     top: getRangeRandom(vPosRangeTopY[0], vPosRangeTopY[1]),
                     left: getRangeRandom(vPosRangeX[0], vPosRangeX[1])
                 }
+                imgsArrangeTopArr[indx].rotate = get30DegRandom();
+                imgsArrangeTopArr[indx].isCenter = false;
             });
 
             // left right
@@ -176,7 +216,9 @@ var AppComponent =  React.createClass({
                     pos: {
                         top: getRangeRandom(hPosRangeY[0], hPosRangeY[1]),
                         left: getRangeRandom(hPosRangeLORX[0], hPosRangeLORX[1])
-                    }
+                    },
+                    rotate: get30DegRandom(),
+                    isCenter: false
                 };
             }
 
@@ -203,10 +245,13 @@ var AppComponent =  React.createClass({
                             pos: {
                                 left: 0,
                                 top: 0
-                            }
+                            },
+                            rotate: 0,
+                            isInverse: false,
+                            isCenter: false
                         }
                     }
-                    imgFigures.push(<ImgFigure data = {val} ref = {'imgFigure' + indx} arrange={this.state.imgsArrangeArr[indx]}/>)
+                    imgFigures.push(<ImgFigure data = {val} ref = {'imgFigure' + indx} arrange={this.state.imgsArrangeArr[indx]} inverse={this.inverse(indx)} center={this.center(indx)}/>)
                     }.bind(this));
 
             return (
