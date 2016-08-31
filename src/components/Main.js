@@ -15,7 +15,6 @@ imagesData = (function (imagesDataArr) {
     }
     return imagesDataArr;
 })(imagesData);
-console.log('data:', imagesData);
 
 function getRangeRandom(low, high) {
     return Math.ceil(Math.random() * (high - low) + low);
@@ -77,12 +76,42 @@ var ImgFigure = React.createClass({
     }
 });
 
+
+var ControllerUnit = React.createClass({
+    handleClick: function (e) {
+
+        if (this.props.arrange.isCenter) {
+            this.props.inverse();
+        }else {
+            this.props.center();
+        }
+
+        e.preventDefault();
+        e.stopPropagation();
+    },
+    render: function () {
+        var className = 'controller-unit';
+        if (this.props.arrange.isCenter) {
+            className += ' is-center';
+            if (this.props.arrange.isInverse) {
+                className += ' is-inverse';
+            }
+        }
+        return (
+            <span className={className} onClick={this.handleClick}></span>
+        )
+    }
+});
+
+
+
+
 var AppComponent =  React.createClass({
 
         Constant: {
             centerPos: {
                 left: 0,
-                top: 0,
+                top: 0
             },
             hPosRange: { // 水平
                 y: [0, 0],
@@ -175,12 +204,10 @@ var AppComponent =  React.createClass({
                 vPosRangeX = vPosRange.x,
 
                 imgsArrangeTopArr = [],
-                topImgNum = Math.ceil(Math.random() * 2),
+                topImgNum = Math.floor(Math.random() * 2),
 
                 topImgSpliceIndex = 0,
                 imgsArrangeCenterArr = imgsArrangeArr.splice(centerIndex, 1);
-
-            console.log(vPosRangeX);
 
             // center
             imgsArrangeCenterArr[0].pos = centerPos;
@@ -240,26 +267,31 @@ var AppComponent =  React.createClass({
                 imgFigures = [];
 
             imagesData.forEach(function (val, indx) {
-                    if (!this.state.imgsArrangeArr[indx]) {
-                        this.state.imgsArrangeArr[indx] = {
-                            pos: {
-                                left: 0,
-                                top: 0
-                            },
-                            rotate: 0,
-                            isInverse: false,
-                            isCenter: false
-                        }
+                if (!this.state.imgsArrangeArr[indx]) {
+                    this.state.imgsArrangeArr[indx] = {
+                        pos: {
+                            left: 0,
+                            top: 0
+                        },
+                        rotate: 0,
+                        isInverse: false,
+                        isCenter: false
                     }
-                    imgFigures.push(<ImgFigure data = {val} ref = {'imgFigure' + indx} arrange={this.state.imgsArrangeArr[indx]} inverse={this.inverse(indx)} center={this.center(indx)}/>)
-                    }.bind(this));
+                }
+                imgFigures.push(<ImgFigure key={indx} data = {val} ref = {'imgFigure' + indx} arrange={this.state.imgsArrangeArr[indx]} inverse={this.inverse(indx)} center={this.center(indx)}/>);
+
+                controllerUnits.push(<ControllerUnit key={indx} arrange={this.state.imgsArrangeArr[indx]} inverse={this.inverse(indx)} center={this.center(indx)}/>);
+
+            }.bind(this));
+
+
 
             return (
                 <section className = "stage" ref = "stage">
                     <section className = "img-sec" >
                         {imgFigures}
                     </section>
-                    <nav className = "controller" ></nav>
+                    <nav className = "controller" >{controllerUnits}</nav>
                 </section>
             );
 
@@ -267,5 +299,6 @@ var AppComponent =  React.createClass({
 });
 
 // AppComponent.defaultProps = {};
+
 
 export default AppComponent;
